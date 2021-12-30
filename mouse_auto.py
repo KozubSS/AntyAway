@@ -45,7 +45,7 @@ class GUIAutomation():
         mouse.move("200", "400")
         mouse.click("left")
 
-class GUILogOutput():
+class GUIOutput():
 
     def firs_time_output(self):
         eula = Text(root, yscrollcommand=scroll.set)
