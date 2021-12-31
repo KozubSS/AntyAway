@@ -37,30 +37,26 @@ class countingThread(Thread):
             time.sleep(2)
 
 
-class GUIAutomation():
-    
-    def mouse(self):
+class GUIAutomation():    
+    def mouse_action(self):
         mouse.move("420", "500")
         mouse.click("left")
         mouse.move("200", "400")
         mouse.click("left")
 
-class GUIOutput():
 
+class GUIOutput():
     def firs_time_output(self):
-        eula = Text(root, yscrollcommand=scroll.set)
         eula.insert(
             END, "------------------------------------------------------------\n"
         )
         eula.insert(
-            END,f"Script started at: {now_time_format}.\nTime left: {final_time-now_time} minutes\n",
+            END, f"Script started at: {now_time_format}.\nTime left: {final_time-now_time} minutes\n",
         )
 
     def time_output(self):
-        eula = Text(root, yscrollcommand=scroll.set)
         eula.insert(
-            END,
-            f"Duration: {left_time_format[:-7]} minutes. Script will finish at {final_time_format}.\n",
+            END, f"Duration: {left_time_format[:-7]} minutes. Script will finish at {final_time_format}.\n",
         )
 
 
@@ -70,7 +66,9 @@ class timingThread(Thread):
         Thread.__init__(self)
 
     def run(self):
-        global final_time, now_time_format, now_time
+        mouse_auto = GUIAutomation()
+        log_auto = GUIOutput()
+        global final_time, now_time_format, now_time, eula
         if running:
             eula = Text(root, yscrollcommand=scroll.set)
         eula.pack()
@@ -82,14 +80,15 @@ class timingThread(Thread):
         final_time = now_time + timedelta(minutes=n)
 
         # Update textbox 'eula' in window
+        log_auto.firs_time_output()
         print("-----------------------------------------")
-        eula.insert(
-            END, "------------------------------------------------------------\n"
-        )
-        eula.insert(
-            END,
-            f"Script started at: {now_time_format}.\nTime left: {final_time-now_time} minutes\n",
-        )
+        # eula.insert(
+        #     END, "------------------------------------------------------------\n"
+        # )
+        # eula.insert(
+        #     END,
+        #     f"Script started at: {now_time_format}.\nTime left: {final_time-now_time} minutes\n",
+        # )
         print(f"Script started at: {now_time_format}")
         print("Time left : ", final_time - now_time, "minutes")
 
@@ -105,7 +104,8 @@ class timingThread(Thread):
             if current_time >= time_by1_format:
                 global left_time_format
                 min_left += 2
-                GUIAutomation.mouse()
+                
+                mouse_auto.mouse_action()
 
                 # Set time variable and uptade the exsisting one
                 print("Time left : ", final_time - now_time2, "minutes")
@@ -114,10 +114,11 @@ class timingThread(Thread):
                 left_time_format = str(final_time - now_time2)
 
                 # Update textbox 'eula' in window
-                eula.insert(
-                    END,
-                    f"Duration: {left_time_format[:-7]} minutes. Script will finish at {final_time_format}.\n",
-                )
+                log_auto.time_output()
+                # eula.insert(
+                #     END,
+                #     f"Duration: {left_time_format[:-7]} minutes. Script will finish at {final_time_format}.\n",
+                # )
                 scroll.config(command=eula.yview)
 
             if current_time >= min_before_end_format:
@@ -128,8 +129,7 @@ class timingThread(Thread):
                 running == False
                 break
 
-
-    
+   
 
 def start():
     # threading.Thread(target=counting).start()
@@ -153,67 +153,6 @@ def counting():
         now_time2 = datetime.now()
         current_time = now_time2.strftime("%H:%M:%S")
         time.sleep(2)
-
-
-# loop don't let us 'be away in teams'
-def timing():
-    if running:
-        eula = Text(root, yscrollcommand=scroll.set)
-        eula.pack()
-        now_time = datetime.now()
-        now_time_format = now_time.strftime("%H:%M:%S")
-        min_left = 2
-        time_work = time_work_var.get()
-        n = int(time_work)  # ilosc czasu jaki ma dzialać skrypt
-        final_time = now_time + timedelta(minutes=n)
-
-        # Update textbox 'eula' in window
-        print("-----------------------------------------")
-        eula.insert(
-            END, "------------------------------------------------------------\n"
-        )
-        eula.insert(
-            END,
-            f"Script started at: {now_time_format}.\nTime left: {final_time-now_time} minutes\n",
-        )
-        print(f"Script started at: {now_time_format}")
-        print("Time left : ", final_time - now_time, "minutes")
-
-        time_by1 = now_time + timedelta(minutes=min_left)
-        time_by1_format = time_by1.strftime("%H:%M:%S")
-
-        while running:
-            final_time_format = final_time.strftime("%H:%M:%S")
-            min_before_end = final_time - timedelta(minutes=0.2)
-            min_before_end_format = min_before_end.strftime("%H:%M:%S")
-            time.sleep(3)
-            if current_time >= time_by1_format:
-                min_left += 2
-                mouse.move("420", "500")
-                mouse.click("left")
-                mouse.move("200", "400")
-                mouse.click("left")
-
-                # Set time variable and uptade the exsisting one
-                print("Time left : ", final_time - now_time2, "minutes")
-                time_by1 = now_time + timedelta(minutes=min_left)
-                time_by1_format = time_by1.strftime("%H:%M:%S")
-                left_time_format = str(final_time - now_time2)
-
-                # Update textbox 'eula' in window
-                eula.insert(
-                    END,
-                    f"Duration: {left_time_format[:-7]} minutes. Script will finish at {final_time_format}.\n",
-                )
-                scroll.config(command=eula.yview)
-
-            if current_time >= min_before_end_format:
-                # Update textbox 'eula' in window
-                print("Script finished at:", datetime.now())
-                eula.insert(END, f"Script finished at: {current_time}.\n")
-
-                running == False
-                break
 
 
 startButton = Button(root, text="Run Script", command=start).pack()
