@@ -132,12 +132,10 @@ class timingThread(Thread):
    
 
 def start():
-    # threading.Thread(target=counting).start()
     countingt = countingThread()
     countingt.start()
     time.sleep(0.5)
     timingt = timingThread()
-    # threading.Thread(target=timing).start()
     timingt.start()
 
 
