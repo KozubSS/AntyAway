@@ -147,13 +147,6 @@ def stop():
     root.quit()
 
 
-def counting():
-    while running:
-        global now_time2, current_time
-        now_time2 = datetime.now()
-        current_time = now_time2.strftime("%H:%M:%S")
-        time.sleep(2)
-
 
 startButton = Button(root, text="Run Script", command=start).pack()
 stopButton = Button(root, text="Stop", command=stop).pack()
